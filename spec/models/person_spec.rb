@@ -2,11 +2,11 @@ require 'rails_helper'
 
 describe Person do
   context 'When colling gender instance functions' do
-    let!(:female_1) { FactoryGirl.create(:woman)}
-    let!(:female_2) { FactoryGirl.create(:woman)}
-    let!(:male_1) { FactoryGirl.create(:man)}
-    let!(:female_3) { FactoryGirl.create(:woman)}
-    let!(:male_2) { FactoryGirl.create(:man)}
+    let!(:female_1) { create(:woman)}
+    let!(:female_2) { create(:woman)}
+    let!(:male_1) { create(:man)}
+    let!(:female_3) { create(:woman)}
+    let!(:male_2) { create(:man)}
 
     describe '#male' do
       it 'should return proper records' do
