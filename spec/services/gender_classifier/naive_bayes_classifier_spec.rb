@@ -60,6 +60,49 @@ describe Classifier::NaiveBayesClassifier do
         expect(subject.send(:second_range_second_param_mean)).to eq 59
       end
     end
-  end
 
+    describe '#first_range_first_param_variance' do
+      it 'returns proper value' do
+        expect(subject.send(:first_range_first_param_variance)).to eq 42.25
+      end
+
+      it 'returns proper value for different input' do
+        create(:man, height: 200, weight: 120)
+        expect(subject.send(:first_range_first_param_variance)).to eq 105.8
+      end
+    end
+
+    describe '#first_range_second_param_variance' do
+      it 'returns proper value' do
+        expect(subject.send(:first_range_second_param_variance)).to be_within(0.001).of 72.917
+      end
+
+      it 'returns proper value for different input' do
+        create(:man, height: 200, weight: 120)
+        expect(subject.send(:first_range_second_param_variance)).to eq 355
+      end
+    end
+
+    describe '#second_range_first_param_variance' do
+      it 'returns proper value' do
+        expect(subject.send(:second_range_first_param_variance)).to be_within(0.001).of 83.333
+      end
+
+      it 'returns proper value for different input' do
+        create(:woman, height: 168, weight: 58)
+        expect(subject.send(:second_range_first_param_variance)).to eq 64.3
+      end
+    end
+
+    describe '#second_range_second_param_variance' do
+      it 'returns proper value' do
+        expect(subject.send(:second_range_second_param_variance)).to be_within(0.001).of 95.583
+      end
+
+      it 'returns proper value for different input' do
+        create(:woman, height: 168, weight: 58)
+        expect(subject.send(:second_range_second_param_variance)).to eq 72
+      end
+    end
+  end
 end
