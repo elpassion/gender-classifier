@@ -7,7 +7,7 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(person_params)
     if @person.save
-      redirect_to root_path
+      redirect_to people_path
     else
       render 'new'
     end
