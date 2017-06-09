@@ -1,6 +1,6 @@
 module Classifier
   class NaiveBayesClassifier
-    def initialize(values, classify_param, data_table)
+    def initialize(values:, classify_param:, data_table:)
       @values = values
       @classify_param = classify_param
       @data_table = data_table
@@ -9,7 +9,7 @@ module Classifier
     def run
       calculate_posterior.max_by{|k,v| v}[0]
     end
-    
+
     private
 
     attr_reader :values, :classify_param, :data_table

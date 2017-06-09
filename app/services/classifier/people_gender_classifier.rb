@@ -1,12 +1,14 @@
 module Classifier
   class PeopleGenderClassifier
-     def initialize(weight, height)
+     def initialize(weight:, height:)
        @weight = weight
        @height = height
      end
 
      def classify
-       NaiveBayesClassifier.new(processing_values, 'gender', Person).run
+       NaiveBayesClassifier.new(values: processing_values,
+                                classify_param: 'gender',
+                                data_table: Person).run
      end
 
      private
@@ -18,4 +20,3 @@ module Classifier
      end
   end
 end
-

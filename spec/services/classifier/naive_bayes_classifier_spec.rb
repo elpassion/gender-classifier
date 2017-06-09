@@ -10,7 +10,7 @@ describe Classifier::NaiveBayesClassifier do
   let!(:female_3) { create(:woman, height: 175, weight: 70)}
   let!(:female_4) { create(:woman, height: 170, weight: 65)}
 
-  subject { described_class.new(value_hash, 'gender', Person) }
+  subject { described_class.new(values: value_hash, classify_param: 'gender', data_table: Person) }
   let(:value_hash) { { height: 150, weight: 50} }
 
   describe '#run' do
@@ -28,10 +28,8 @@ describe Classifier::NaiveBayesClassifier do
     end
   end
 
-  #testing private functions mainly because of TDD
+  #testing private functions because of TDD and to check if every calculation is performed properly
   context 'testing private methods' do
-
-
     describe '#numerator_of_posterior' do
       it 'returns proper value for male' do
         expect(subject.send(:numerator_of_posterior, Person.male)).to be_within(0.001e-11).of 2.446e-11
