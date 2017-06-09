@@ -1,0 +1,16 @@
+p List of People
+p
+  table
+    thead
+      tr
+        th height
+        th weight
+        th gender
+    tbody
+      - @people.each do |person|
+        tr
+          td = person.height
+          td = person.weight
+          td = person.gender
+
+
