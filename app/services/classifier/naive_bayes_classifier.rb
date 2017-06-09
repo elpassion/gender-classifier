@@ -7,47 +7,41 @@ module Classifier
       @data_table = data_table
     end
 
+    def run
+      classify_param_hash = data_table.send(classify_param.pluralize)
+      result = classify_param_hash.reduce({}) do |hash, el|
+        range = data_table.where("#{classify_param} = ?", el[1])
+        hash[el[0]] = numerator_of_posterior(range)
+        hash
+      end
+      result.max_by{|k,v| v}[0]
+    end
+
     private
 
     attr_reader :values, :classify_param, :data_table
 
-    def first_range_first_param_variance
-      variance(first_range, first_range_first_param_mean, first_given_param)
+    def numerator_of_posterior(range)
+      likehood_total = values.each.reduce(1) do |product, el|
+        mean = mean(range, el[0])
+        product *= likelihood(el[1], mean, variance(range, el[0]))
+      end
+      range.count.to_f / data_table.count * likehood_total
     end
 
-    def first_range_second_param_variance
-      variance(first_range, first_range_second_param_mean, second_given_param)
+    def likelihood(value, mean, variance)
+      1/(Math.sqrt(2*Math::PI*variance)) * Math.exp(( - (value - mean)**2)/(2*variance))
     end
 
-    def second_range_first_param_variance
-      variance(second_range, second_range_first_param_mean, first_given_param)
-    end
-
-    def second_range_second_param_variance
-      variance(second_range, second_range_second_param_mean, second_given_param)
-    end
-
-    def first_range_first_param_mean
-      @first_range_first_param_mean ||= first_range.average(first_given_param)
-    end
-
-    def first_range_second_param_mean
-      @first_range_second_param_mean ||= first_range.average(second_given_param)
-    end
-
-    def second_range_first_param_mean
-      @second_range_first_param_mean ||= second_range.average(first_given_param)
-    end
-
-    def second_range_second_param_mean
-      @second_range_second_param_mean ||= second_range.average(second_given_param)
-    end
-
-    def variance(range, mean, param)
-      total = range.reduce(0) { |sum, el| sum += (mean - el.send(param)) **2 }
+    def variance(range, param)
+      total = range.reduce(0) { |sum, el| sum += (mean(range, param) - el.send(param)) **2 }
       total/(range.count - 1)
     end
-    
+
+    def mean(range, param)
+      range.average(param)
+    end
+
     def first_range
       @first_range ||= data_table.where("#{classify_param} = ?", 0 )
     end

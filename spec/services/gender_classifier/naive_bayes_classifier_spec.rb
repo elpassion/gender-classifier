@@ -10,98 +10,80 @@ describe Classifier::NaiveBayesClassifier do
   let!(:female_3) { create(:woman, height: 175, weight: 70)}
   let!(:female_4) { create(:woman, height: 170, weight: 65)}
 
+  subject { described_class.new(value_hash, 'gender', Person) }
+  let(:value_hash) { { height: 150, weight: 50} }
 
-#testing private functions mainly because of TDD
+  describe '#run' do
+    context 'testing female params' do
+      it 'should return woman' do
+        expect(subject.run).to eq 'female'
+      end
+    end
+
+    context 'testing male params' do
+      let(:value_hash) { { height: 180, weight: 80} }
+      it 'should return man' do
+        expect(subject.run).to eq 'male'
+      end
+    end
+  end
+
+  #testing private functions mainly because of TDD
   context 'testing private methods' do
 
-    let(:value_hash) { { height: 150, weight: 50} }
-    subject { described_class.new(value_hash, 'gender', Person) }
 
-    describe '#first_range_first_param_mean' do
-      it 'returns proper value' do
-        expect(subject.send(:first_range_first_param_mean)).to eq 180.75
+    describe '#numerator_of_posterior' do
+      it 'returns proper value for male' do
+        expect(subject.send(:numerator_of_posterior, Person.male)).to be_within(0.001e-11).of 2.446e-11
       end
 
-      it 'returns proper value for different input' do
-        create(:man, height: 200, weight: 120)
-        expect(subject.send(:first_range_first_param_mean)).to eq 184.6
+      it 'returns proper value for female' do
+        expect(subject.send(:numerator_of_posterior, Person.female)).to be_within(0.001e-4).of 1.477e-4
       end
     end
 
-    describe '#first_range_second_param_mean' do
+    describe '#likelihood' do
       it 'returns proper value' do
-        expect(subject.send(:first_range_second_param_mean)).to eq 81.25
-      end
-
-      it 'returns proper value for different input' do
-        create(:man, height: 200, weight: 120)
-        expect(subject.send(:first_range_second_param_mean)).to eq 89
+        value = 6
+        mean = 5.855
+        variance = 0.035
+        expect(subject.send(:likelihood, value, mean, variance)).to be_within(0.001).of 1.579
       end
     end
 
-    describe '#second_range_first_param_mean' do
-      it 'returns proper value' do
-        expect(subject.send(:second_range_first_param_mean)).to eq 165
+    describe '#mean' do
+      it "returns proper value for man's height" do
+        expect(subject.send(:mean, Person.male, 'height')).to eq 180.75
       end
 
-      it 'returns proper value for different input' do
-        create(:woman, height: 168, weight: 58)
-        expect(subject.send(:second_range_first_param_mean)).to eq 165.6
-      end
-    end
-
-    describe '#second_range_first_param_mean' do
-      it 'returns proper value' do
-        expect(subject.send(:second_range_second_param_mean)).to eq 59.25
+      it "returns proper value for man's weight" do
+        expect(subject.send(:mean, Person.male, 'weight')).to eq 81.25
       end
 
-      it 'returns proper value for different input' do
-        create(:woman, height: 168, weight: 58)
-        expect(subject.send(:second_range_second_param_mean)).to eq 59
+      it "returns proper value for woman's height" do
+        expect(subject.send(:mean, Person.female, 'height')).to eq 165
+      end
+
+      it "returns proper value for woman's weight" do
+        expect(subject.send(:mean, Person.female, 'weight')).to eq 59.25
       end
     end
 
-    describe '#first_range_first_param_variance' do
-      it 'returns proper value' do
-        expect(subject.send(:first_range_first_param_variance)).to eq 42.25
+    describe '#variance' do
+      it "returns proper value for man's height" do
+        expect(subject.send(:variance, Person.male, 'height')).to eq 42.25
       end
 
-      it 'returns proper value for different input' do
-        create(:man, height: 200, weight: 120)
-        expect(subject.send(:first_range_first_param_variance)).to eq 105.8
-      end
-    end
-
-    describe '#first_range_second_param_variance' do
-      it 'returns proper value' do
-        expect(subject.send(:first_range_second_param_variance)).to be_within(0.001).of 72.917
+      it "returns proper value for man's weight" do
+        expect(subject.send(:variance, Person.male, 'weight')).to be_within(0.001).of 72.917
       end
 
-      it 'returns proper value for different input' do
-        create(:man, height: 200, weight: 120)
-        expect(subject.send(:first_range_second_param_variance)).to eq 355
-      end
-    end
-
-    describe '#second_range_first_param_variance' do
-      it 'returns proper value' do
-        expect(subject.send(:second_range_first_param_variance)).to be_within(0.001).of 83.333
+      it "returns proper value for woman's height" do
+        expect(subject.send(:variance, Person.female, 'height')).to be_within(0.001).of 83.333
       end
 
-      it 'returns proper value for different input' do
-        create(:woman, height: 168, weight: 58)
-        expect(subject.send(:second_range_first_param_variance)).to eq 64.3
-      end
-    end
-
-    describe '#second_range_second_param_variance' do
-      it 'returns proper value' do
-        expect(subject.send(:second_range_second_param_variance)).to be_within(0.001).of 95.583
-      end
-
-      it 'returns proper value for different input' do
-        create(:woman, height: 168, weight: 58)
-        expect(subject.send(:second_range_second_param_variance)).to eq 72
+      it "returns proper value for woman's weight" do
+        expect(subject.send(:variance, Person.female, 'weight')).to be_within(0.001).of 95.583
       end
     end
   end
