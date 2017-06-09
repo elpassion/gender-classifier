@@ -4,5 +4,5 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   post '/' => 'home#calculate', as: 'calculate'
-  resources :people
+  resources :people, except: :show
 end

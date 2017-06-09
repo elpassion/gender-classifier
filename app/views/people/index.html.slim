@@ -6,11 +6,13 @@ p
         th height
         th weight
         th gender
+        th
     tbody
       - @people.each do |person|
         tr
           td = person.height
           td = person.weight
           td = person.gender
+          td = link_to 'Edit', edit_person_path(person.id)
 
 

@@ -1,4 +1,9 @@
 class PeopleController < ApplicationController
+  before_action :set_person, only: [:edit, :update, :destroy]
+
+  def index
+    @people = Person.all
+  end
 
   def new
     @person = Person.new
@@ -13,11 +18,24 @@ class PeopleController < ApplicationController
     end
   end
 
-  def index
-    @people = Person.all
+  def edit
+  end
+
+  def update
+    if @person.update(person_params)
+      redirect_to people_path
+    end
+  end
+
+  def destroy
+
   end
 
   private
+
+  def set_person
+    @person = Person.find(params[:id])
+  end
 
   def person_params
     params.require(:person).permit(:weight, :height, :gender)
