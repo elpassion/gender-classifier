@@ -1,10 +1,8 @@
 module Classifier
-  class InvalidInput < StandardError; end
   class PeopleGenderClassifier
     include ActiveModel::Validations
 
     validates :weight, :height, numericality: { greater_than: 0 }
-
 
     def initialize(weight:, height:)
        @weight = weight
@@ -29,4 +27,5 @@ module Classifier
        { weight: weight, height: height }
      end
   end
+  class InvalidInput < Error; end
 end

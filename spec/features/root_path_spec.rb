@@ -56,7 +56,7 @@ describe 'when visiting root page' do
       fill_in 'Height', with: 187
 
       click_button 'Predict Gender'
-      expect(page).to have_content 'Not enough test data! Upload some measurements in test data section.'
+      expect(page).to have_content 'Not enough test data! Upload more measurement'
     end
 
     it 'displays proper error message with no small dataset' do
@@ -69,7 +69,7 @@ describe 'when visiting root page' do
       fill_in 'Height', with: 187
 
       click_button 'Predict Gender'
-      expect(page).to have_content 'Not enough test data! Upload some measurements in test data section.'
+      expect(page).to have_content 'Not enough test data! Upload more measurement'
     end
   end
 end
