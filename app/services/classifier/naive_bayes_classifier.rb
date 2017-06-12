@@ -1,5 +1,6 @@
 module Classifier
   class InvalidColumn < StandardError; end
+  class NotEnoughData < StandardError; end
   class NaiveBayesClassifier
     def initialize(values:, classify_param:, data_table:)
       @values = values
@@ -41,11 +42,14 @@ module Classifier
     end
 
     def range(value)
-      data_table.where("#{classify_param} = ?", value)
+      range = data_table.where("#{classify_param} = ?", value)
+      raise NotEnoughData if range.empty?
+      range
     end
 
     def variance(range, param)
       total = range.reduce(0) { |sum, el| sum += (mean(range, param) - el.send(param)) **2 }
+      raise NotEnoughData if total == 0
       total/(range.count - 1)
     end
 

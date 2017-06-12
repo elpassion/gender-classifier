@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 describe Classifier::NaiveBayesClassifier do
+  subject { described_class.new(values: value_hash, classify_param: 'gender', data_table: Person) }
+  let(:value_hash) { {height: 150, weight: 50} }
+
   context 'with varied valida data' do
     let!(:male_1) { create(:man, height: 180, weight: 85) }
     let!(:male_2) { create(:man, height: 190, weight: 90) }
@@ -10,9 +13,6 @@ describe Classifier::NaiveBayesClassifier do
     let!(:female_2) { create(:woman, height: 155, weight: 52) }
     let!(:female_3) { create(:woman, height: 175, weight: 70) }
     let!(:female_4) { create(:woman, height: 170, weight: 65) }
-
-    subject { described_class.new(values: value_hash, classify_param: 'gender', data_table: Person) }
-    let(:value_hash) { {height: 150, weight: 50} }
 
     describe '#run' do
       context 'testing female params' do
@@ -104,18 +104,32 @@ describe Classifier::NaiveBayesClassifier do
   end
 
   context 'with invalid column name' do
-    it 'raise error when column is not exist' do
+    it 'raise error when value column is not exist' do
       value_hash = { fake: 'test'}
       subject = described_class.new(values: value_hash, classify_param: 'gender', data_table: Person)
       expect{subject.run}.to raise_error(Classifier::InvalidColumn, /Invalid column: fake/)
     end
-  end
 
-  context 'with invalid classify_param' do
-    it 'raise error with proper message' do
-      value_hash = { height: 150, weight: 50}
+    it 'raise error with proper message when classify_param is not exist' do
       subject = described_class.new(values: value_hash, classify_param: 'fake', data_table: Person)
       expect{subject.run}.to raise_error(Classifier::InvalidColumn, /Invalid column: fake/)
+    end
+  end
+
+  context 'with no test data' do
+    it 'raise error with proper message' do
+      expect{subject.run}.to raise_error(Classifier::NotEnoughData)
+    end
+  end
+
+  context 'with not enough and too repetitive test data' do
+    let!(:male_1) { create(:man, height: 180, weight: 85) }
+    let!(:male_2) { create(:man, height: 180, weight: 90) }
+    let!(:female_3) { create(:woman, height: 170, weight: 70) }
+    let!(:female_4) { create(:woman, height: 170, weight: 65) }
+
+    it 'raise error with proper message' do
+      expect{subject.run}.to raise_error(Classifier::NotEnoughData)
     end
   end
 end
