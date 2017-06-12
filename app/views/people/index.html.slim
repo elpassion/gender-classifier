@@ -7,6 +7,7 @@ p
         th weight
         th gender
         th
+        th
     tbody
       - @people.each do |person|
         tr
@@ -14,5 +15,6 @@ p
           td = person.weight
           td = person.gender
           td = link_to 'Edit', edit_person_path(person.id)
+          td = link_to 'Delete', person_path(person.id), method: :delete
 
 
