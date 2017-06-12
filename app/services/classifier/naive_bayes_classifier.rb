@@ -1,5 +1,5 @@
 module Classifier
-  class InvalidColumnType < StandardError; end
+  class InvalidColumn < StandardError; end
   class NaiveBayesClassifier
     def initialize(values:, classify_param:, data_table:)
       @values = values
@@ -8,7 +8,7 @@ module Classifier
     end
 
     def run
-      check_columns
+      validate_data
       calculate_posterior.max_by{|k,v| v}[0]
     end
 
@@ -53,12 +53,25 @@ module Classifier
       range.average(param)
     end
 
-    def check_columns
+    def validate_data
+      check_values
+      check_classify_param
+    end
+
+    def check_values
       values.each_key do |value|
-        column = data_table.columns_hash[value.to_s]
-        unless column && column.type == :integer
-          raise InvalidColumnType, "Invalid column type: #{value}"
-        end
+        check_column(value)
+      end
+    end
+
+    def check_classify_param
+      check_column(classify_param)
+    end
+
+    def check_column(value)
+      column = data_table.columns_hash[value.to_s]
+      unless column && column.type == :integer
+        raise InvalidColumn, "Invalid column: #{value}"
       end
     end
   end

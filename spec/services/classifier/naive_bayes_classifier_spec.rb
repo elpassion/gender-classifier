@@ -96,18 +96,26 @@ describe Classifier::NaiveBayesClassifier do
       allow(Person).to receive(:columns_hash).and_return stub_columns_hash
     end
 
-    it 'Raise error when column is not integer' do
+    it 'raise error when column is not integer' do
       value_hash = { foo: 'test'}
       subject = described_class.new(values: value_hash, classify_param: 'gender', data_table: Person)
-      expect{subject.run}.to raise_error(Classifier::InvalidColumnType, /Invalid column type: foo/)
+      expect{subject.run}.to raise_error(Classifier::InvalidColumn, /Invalid column: foo/)
     end
   end
 
-  context 'with false column name' do
-    it 'Raise error when column is not exist' do
+  context 'with invalid column name' do
+    it 'raise error when column is not exist' do
       value_hash = { fake: 'test'}
       subject = described_class.new(values: value_hash, classify_param: 'gender', data_table: Person)
-      expect{subject.run}.to raise_error(Classifier::InvalidColumnType, /Invalid column type: fake/)
+      expect{subject.run}.to raise_error(Classifier::InvalidColumn, /Invalid column: fake/)
+    end
+  end
+
+  context 'with invalid classify_param' do
+    it 'raise error with proper message' do
+      value_hash = { height: 150, weight: 50}
+      subject = described_class.new(values: value_hash, classify_param: 'fake', data_table: Person)
+      expect{subject.run}.to raise_error(Classifier::InvalidColumn, /Invalid column: fake/)
     end
   end
 end
