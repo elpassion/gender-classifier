@@ -35,8 +35,14 @@ describe 'User create new test person' do
       expect(page).to have_current_path people_path
     end
 
-    it 'should create record' do
+    it 'should not create record' do
       expect { click_button 'Create Person' }.not_to change { Person.count }
+    end
+
+    it 'should display proper error message' do
+      click_button 'Create Person'
+
+      expect(page).to have_content "Weight can't be blank"
     end
   end
 end

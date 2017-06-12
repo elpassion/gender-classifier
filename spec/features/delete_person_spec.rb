@@ -6,9 +6,7 @@ describe 'User delete person' do
   let!(:female_1) { create(:woman, height: 160, weight: 50)}
 
   context 'within people path' do
-    before do
-      visit people_path
-    end
+    before { visit people_path }
 
     it 'should contains delete links' do
       expect(page).to have_link 'Delete',  href: person_path(female_1.id)
