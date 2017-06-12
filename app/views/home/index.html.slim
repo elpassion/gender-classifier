@@ -12,6 +12,8 @@ p Gender Classifier
   div.actions
     = f.submit 'Predict Gender'
 
-- if @gender
+- if @error
+  = @error
+- elsif @gender
   p GENDER:
   p = @gender

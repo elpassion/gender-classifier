@@ -37,4 +37,14 @@ describe 'when visiting root page' do
       end
     end
   end
+
+  context 'with invalid data' do
+    it 'should display error' do
+      fill_in 'Weight', with: 0
+      fill_in 'Height', with: nil
+
+      click_button 'Predict Gender'
+      expect(page).to have_content 'Weight must be greater than 0, Height must be greater than 0'
+    end
+  end
 end

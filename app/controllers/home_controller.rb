@@ -7,6 +7,9 @@ class HomeController < ApplicationController
     @gender = Classifier::PeopleGenderClassifier.new(weight: person[:weight].to_i,
                                            height: person[:height].to_i).classify
     render 'index'
+  rescue Classifier::InvalidInput => e
+    @error = e
+    render 'index'
   end
 
   private

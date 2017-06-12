@@ -11,22 +11,41 @@ describe Classifier::PeopleGenderClassifier do
   let!(:female_4) { create(:woman, height: 170, weight: 65)}
 
   describe '#classify' do
-    it "should receive male when man's data given" do
-      subject = described_class.new(weight: 80, height: 180)
-      expect(subject.classify).to eq 'male'
-    end
-    it "should receive male when another man's data given" do
-      subject = described_class.new(weight: 75, height: 178)
-      expect(subject.classify).to eq 'male'
+    context 'with valid data' do
+      it "should receive male when man's data given" do
+        subject = described_class.new(weight: 80, height: 180)
+        expect(subject.classify).to eq 'male'
+      end
+      it "should receive male when another man's data given" do
+        subject = described_class.new(weight: 75, height: 178)
+        expect(subject.classify).to eq 'male'
+      end
+
+      it "should receive female when woman's data given" do
+        subject = described_class.new(weight: 50, height: 160)
+        expect(subject.classify).to eq 'female'
+      end
+      it "should receive female when another woman's data given" do
+        subject = described_class.new(weight: 60, height: 164)
+        expect(subject.classify).to eq 'female'
+      end
     end
 
-    it "should receive female when woman's data given" do
-      subject = described_class.new(weight: 50, height: 160)
-      expect(subject.classify).to eq 'female'
+    context 'with invalid data' do
+      it 'should raise error when weight or height are empty' do
+        subject = described_class.new(weight: nil, height: nil)
+        expect{ subject.classify }.to raise_error(Classifier::InvalidInput, /Weight is not a number/)
     end
-    it "should receive female when another woman's data given" do
-      subject = described_class.new(weight: 60, height: 164)
-      expect(subject.classify).to eq 'female'
+
+      it 'should raise error when weight or height ale equall or less then 0' do
+        subject = described_class.new(weight: 0, height: 0)
+        expect{ subject.classify }.to raise_error(Classifier::InvalidInput, /Height must be greater than 0/)
+      end
+
+      it 'should raise error when weight or height are not numbers' do
+        subject = described_class.new(weight: 'aaa', height: 'bbbb')
+        expect{ subject.classify }.to raise_error(Classifier::InvalidInput, /Weight is not a number/)
+      end
     end
   end
 end
