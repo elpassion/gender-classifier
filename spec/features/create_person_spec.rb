@@ -45,4 +45,18 @@ describe 'User create new test person' do
       expect(page).to have_content "Weight can't be blank"
     end
   end
+
+  context 'within people path' do
+    before { visit people_path }
+
+    it 'should contain new person link' do
+      expect(page).to have_link 'New person', href: new_person_path
+    end
+
+    it 'clicking New person link should move to new person path' do
+      click_link 'New person'
+
+      expect(page).to have_current_path new_person_path
+    end
+  end
 end
