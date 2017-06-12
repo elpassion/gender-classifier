@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    meta content=("text/html; charset=UTF-8") http-equiv="Content-Type" /
+    title GenderClassifier
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application', media: 'all'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+  body
+    = link_to 'Gender Classifier', root_path, class: 'button'
+    = link_to 'Test data', people_path, class: 'button'
+    = yield
