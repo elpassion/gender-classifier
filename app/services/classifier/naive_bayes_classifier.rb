@@ -8,7 +8,7 @@ module Classifier
 
     def run
       validate_data
-      calculate_posterior.max_by{|k,v| v}[0]
+      calculate_posterior.max_by { |_k, v| v }[0]
     end
 
     private
@@ -27,12 +27,12 @@ module Classifier
 
     def likehood_total(range)
       values.each.reduce(1) do |product, el|
-        product *= likelihood(el[1], mean(range, el[0]), variance(range, el[0]))
+        product * likelihood(el[1], mean(range, el[0]), variance(range, el[0]))
       end
     end
 
     def likelihood(value, mean, variance)
-      1/(Math.sqrt(2*Math::PI*variance)) * Math.exp(( - (value - mean)**2)/(2*variance))
+      1 / (Math.sqrt(2 * Math::PI * variance)) * Math.exp((- (value - mean)**2) / (2 * variance))
     end
 
     def classify_param_hash
@@ -46,9 +46,9 @@ module Classifier
     end
 
     def variance(range, param)
-      total = range.reduce(0) { |sum, el| sum += (mean(range, param) - el.send(param)) **2 }
+      total = range.reduce(0) { |acc, elem| acc + (mean(range, param) - elem.send(param))**2 }
       raise NotEnoughData, 'Not enough test data! Upload more measurement' if total == 0
-      total/(range.count - 1)
+      total / (range.count - 1)
     end
 
     def mean(range, param)
@@ -72,9 +72,8 @@ module Classifier
 
     def check_column(value)
       column = data_table.columns_hash[value.to_s]
-      unless column && column.type == :integer
-        raise InvalidColumn, "Invalid column: #{value}"
-      end
+      return if column && column.type == :integer
+      raise InvalidColumn, "Invalid column: #{value}"
     end
   end
 end

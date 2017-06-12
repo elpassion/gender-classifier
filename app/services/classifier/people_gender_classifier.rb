@@ -5,26 +5,24 @@ module Classifier
     validates :weight, :height, numericality: { greater_than: 0 }
 
     def initialize(weight:, height:)
-       @weight = weight
-       @height = height
-     end
+      @weight = weight
+      @height = height
+    end
 
-     def classify
-       if self.valid?
-         NaiveBayesClassifier.new(values: processing_values,
-                                  classify_param: 'gender',
-                                  data_table: Person).run
-       else
-         raise InvalidInput, self.errors.full_messages.join(', ')
-       end
-     end
+    def classify
+      raise InvalidInput, errors.full_messages.join(', ') unless valid?
+      NaiveBayesClassifier.new(values: processing_values,
+                               classify_param: 'gender',
+                               data_table: Person)
+                          .run
+    end
 
-     private
+    private
 
-     attr_reader :weight, :height
+    attr_reader :weight, :height
 
-     def processing_values
-       { weight: weight, height: height }
-     end
+    def processing_values
+      { weight: weight, height: height }
+    end
   end
 end
