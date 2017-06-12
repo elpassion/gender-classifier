@@ -77,7 +77,4 @@ module Classifier
       end
     end
   end
-  class Error < StandardError; end
-  class InvalidColumn < Error; end
-  class NotEnoughData < Error; end
 end

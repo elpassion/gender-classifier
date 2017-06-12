@@ -27,5 +27,4 @@ module Classifier
        { weight: weight, height: height }
      end
   end
-  class InvalidInput < Error; end
 end
