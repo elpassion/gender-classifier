@@ -10,6 +10,9 @@ class HomeController < ApplicationController
   rescue Classifier::InvalidInput => e
     @error = e
     render 'index'
+  rescue Classifier::NotEnoughData
+    @error = 'Not enough test data! Upload some measurements in test data section.'
+    render 'index'
   end
 
   private
